@@ -41,7 +41,7 @@ Why would be want to rewrite already existing std::filesystem utils? Because
 they're not public non-member functions! A lot of libraries don't use std::filesystem,
 don't use c++ string types or even c-style strings! This introduces an awkward situation
 where while using <filesystem> and some other library some may be tempted allocate memory
-to instatiate a std::filesystem::path just to access the utility functions. Not ideal.
+to instantiate a std::filesystem::path just to access the utility functions. Not ideal.
 
 In short, these are functions that should be part of the <filesystem> header.
 An example of useful functionality that doesn't require any allocations:
