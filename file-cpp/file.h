@@ -41,7 +41,7 @@ Why would be want to rewrite already existing std::filesystem utils? Because
 they're not public non-member functions! A lot of libraries don't use std::filesystem,
 don't use c++ string types or even c-style strings! This introduces an awkward situation
 where while using <filesystem> and some other library some may be tempted allocate memory
-to instantiate a std::filesystem::path just to access the utility functions. Not ideal.
+to instatiate a std::filesystem::path just to access the utility functions. Not ideal.
 
 In short, these are functions that should be part of the <filesystem> header.
 An example of useful functionality that doesn't require any allocations:
@@ -60,12 +60,24 @@ path_split split_path(const std::string_view path) {
 */
 namespace util {
 	namespace wide {
+		/* lowercase -> higher value, we set a bit to convert any uppercase to lowercase */
+		constexpr inline wchar_t ascii_lowercase(wchar_t c)
+		{
+			return c | (L'a' - L'A'); /* a gap of 32 */
+		}
+
+		/* uppercase -> lower value, we unset a bit to convert any lowercase to uppercase */
+		constexpr inline wchar_t ascii_uppercase(wchar_t c)
+		{
+			return c & ~(L'a' - L'A'); /* a gap of 32 */
+		}
+
 		/* TODO: endianness check! */
 		constexpr inline bool is_drive_prefix(const wchar_t* const _First)
 		{
 			// test if _First points to a prefix of the form X:
 			// pre: _First points to at least 2 wchar_t instances
-			return ((std::tolower(_First[0]) - L'a') < 26) && _First[1] == L':';
+			return ((ascii_lowercase(_First[0]) - L'a') < 26) && _First[1] == L':';
 		}
 
 		constexpr inline bool has_drive_letter_prefix(const wchar_t* const _First, const wchar_t* const _Last)
@@ -263,11 +275,23 @@ namespace util {
 
 	} // namespace wide
 	namespace utf8 {
+		/* lowercase -> higher value, we set a bit to convert any uppercase to lowercase */
+		constexpr inline char ascii_lowercase(char c)
+		{
+			return c | ('a' - 'A'); /* a gap of 32 */
+		}
+
+		/* uppercase -> lower value, we unset a bit to convert any lowercase to uppercase */
+		constexpr inline char ascii_uppercase(char c)
+		{
+			return c & ~('a' - 'A'); /* a gap of 32 */
+		}
+
 		constexpr inline bool is_drive_prefix(const char* const _First)
 		{
 			// test if _First points to a prefix of the form X:
 			// pre: _First points to at least 2 char instances
-			return ((std::tolower(_First[0]) - 'a') < 26) && _First[1] == ':';
+			return ((ascii_lowercase(_First[0]) - 'a') < 26) && _First[1] == ':';
 		}
 
 		constexpr bool has_drive_letter_prefix(const char* const _First, const char* const _Last)
