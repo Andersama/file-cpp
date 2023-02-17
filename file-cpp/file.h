@@ -77,7 +77,7 @@ namespace util {
 		{
 			// test if _First points to a prefix of the form X:
 			// pre: _First points to at least 2 wchar_t instances
-			return ((ascii_lowercase(_First[0]) - L'a') < 26) && _First[1] == L':';
+			return ((uint16_t)(ascii_lowercase(_First[0]) - L'a') < 26) && _First[1] == L':';
 		}
 
 		constexpr inline bool has_drive_letter_prefix(const wchar_t* const _First, const wchar_t* const _Last)
@@ -291,7 +291,7 @@ namespace util {
 		{
 			// test if _First points to a prefix of the form X:
 			// pre: _First points to at least 2 char instances
-			return ((ascii_lowercase(_First[0]) - 'a') < 26) && _First[1] == ':';
+			return ((uint8_t)((uint8_t)ascii_lowercase(_First[0]) - (uint8_t)'a') < 26) && _First[1] == ':';
 		}
 
 		constexpr bool has_drive_letter_prefix(const char* const _First, const char* const _Last)
