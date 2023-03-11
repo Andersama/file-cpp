@@ -155,6 +155,24 @@ namespace util {
 			return std::wstring_view(data, static_cast<size_t>(find_root_name_end(data, tail) - data));
 		}
 
+		constexpr std::wstring_view root_directory(const std::wstring_view path)
+		{
+			// attempt to parse path as a path and return the root-directory if it exists; otherwise, an empty view
+			const auto data           = path.data();
+			const auto tail           = data + path.size();
+			const auto root_name_end  = find_root_name_end(data, tail);
+			const auto relative_start = std::find_if_not(root_name_end, tail, is_slash);
+			return std::wstring_view(root_name_end, static_cast<size_t>(relative_start - root_name_end));
+		}
+
+		constexpr std::wstring_view root_path(const std::wstring_view path)
+		{
+			// attempt to parse path as a path and return the root-path if it exists; otherwise, an empty view
+			const auto data = path.data();
+			const auto tail = data + path.size();
+			return std::wstring_view(data, static_cast<size_t>(find_relative_path(data, tail) - data));
+		}
+
 		constexpr const wchar_t* find_relative_path(const wchar_t* const _First, const wchar_t* const _Last)
 		{
 			// attempt to parse [_First, _Last) as a path and return the start of relative-path
@@ -367,6 +385,24 @@ namespace util {
 			const auto data = path.data();
 			const auto tail = data + path.size();
 			return std::string_view(data, static_cast<size_t>(find_root_name_end(data, tail) - data));
+		}
+
+		constexpr std::string_view root_directory(const std::string_view path)
+		{
+			// attempt to parse _Str as a path and return the root-directory if it exists; otherwise, an empty view
+			const auto data           = path.data();
+			const auto tail           = data + path.size();
+			const auto root_name_end  = find_root_name_end(data, tail);
+			const auto relative_start = std::find_if_not(root_name_end, tail, is_slash);
+			return std::string_view(root_name_end, static_cast<size_t>(relative_start - root_name_end));
+		}
+
+		constexpr std::string_view root_path(const std::string_view path)
+		{
+			// attempt to parse path as a path and return the root-path if it exists; otherwise, an empty view
+			const auto data = path.data();
+			const auto tail = data + path.size();
+			return std::string_view(data, static_cast<size_t>(find_relative_path(data, tail) - data));
 		}
 
 		constexpr const char* find_relative_path(const char* const _First, const char* const _Last)
